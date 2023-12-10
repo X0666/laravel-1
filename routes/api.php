@@ -30,7 +30,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', [UserController::class, 'fetch']);
     Route::post('user', [UserController::class, 'updateProfile']);
     Route::post('logout', [UserController::class, 'logout']);
+});
 
+Route::middleware(['auth:sanctum', 'role:USERS'])->group(function () {
     Route::get('transaction', [TransactionController::class, 'all']);
     Route::post('checkout', [TransactionController::class, 'checkout']);
+});
+
+Route::middleware(['auth:sanctum', 'role:ADMIN'])->group(function () {
+    Route::get('admin/products/{id}', [ProductController::class, 'detail']);
+    Route::post('admin/products', [ProductController::class, 'create']);
+    Route::post('admin/products/{id}', [ProductController::class, 'update']);
+    Route::delete('admin/products/{id}', [ProductController::class, 'delete']);
 });
