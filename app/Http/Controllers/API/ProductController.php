@@ -72,6 +72,9 @@ class ProductController extends Controller
     public function create(Request $request)
     {
         try {
+            // Log the request data
+            Log::info('Payload create product :', ['request' => $request->all()]);
+
             $request->validate([
                 'name' => 'required|string|max:255',
                 'description' => 'required|string',
@@ -93,14 +96,23 @@ class ProductController extends Controller
             ]);
 
             // Create ProductGallery
-            if ($request->hasFile('gallery')) {
-                foreach ($request->file('gallery') as $image) {
+            $galleryFiles = $request->file('gallery');
+
+            if (is_array($galleryFiles)) {
+                foreach ($galleryFiles as $image) {
                     $url = $image->store('gallery', 'public'); // Adjust storage folder as needed
                     ProductGallery::create([
                         'products_id' => $product->id,
                         'url' => $url,
                     ]);
                 }
+            } else {
+                // Single file upload scenario
+                $url = $galleryFiles->store('gallery', 'public');
+                ProductGallery::create([
+                    'products_id' => $product->id,
+                    'url' => $url,
+                ]);
             }
 
             // Optionally, you can attach ProductCategory if needed
@@ -152,6 +164,9 @@ class ProductController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            // Log the request data
+            Log::info('Payload create product :', ['request' => $request->all()]);
+
             $product = Product::find($id);
             if (!$product) {
                 return ResponseFormatter::error(

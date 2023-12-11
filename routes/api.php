@@ -24,7 +24,7 @@ Route::get('categories', [ProductCategoryController::class, 'all']);
 
 Route::post('register', [UserController::class, 'register']);
 Route::post('login', [UserController::class, 'login']);
-
+Route::get('payment-method', [TransactionController::class, 'paymentMehtod']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', [UserController::class, 'fetch']);
@@ -36,7 +36,6 @@ Route::middleware(['auth:sanctum', 'role:USERS'])->group(function () {
     Route::get('transaction', [TransactionController::class, 'all']);
     Route::post('checkout', [TransactionController::class, 'checkout']);
     Route::post('transaction/paid', [TransactionController::class, 'paid']);
-    Route::get('payment-method', [TransactionController::class, 'paymentMehtod']);
 });
 
 Route::middleware(['auth:sanctum', 'role:ADMIN'])->group(function () {
