@@ -14,6 +14,13 @@ class Product extends Model
         'name', 'description', 'price', 'categories_id', 'tags'
     ];
 
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'products';
+
     public function galleries()
     {
         return $this->hasMany(ProductGallery::class, 'products_id', 'id');
@@ -22,5 +29,10 @@ class Product extends Model
     public function category()
     {
         return $this->belongsTo(ProductCategory::class, 'categories_id', 'id');
+    }
+
+    public function TransactionItem()
+    {
+        return $this->hasMany(TransactionItem::class, 'products_id', 'id');
     }
 }

@@ -22,7 +22,7 @@ class TransactionController extends Controller
             $page = $request->input('page', 1);
 
             if ($id) {
-                $transaction = Transaction::with(['items.product'])
+                $transaction = Transaction::with(['items'])
                 ->where('users_id', Auth::user()->id)->find($id);
 
                 if ($transaction) {
@@ -39,7 +39,7 @@ class TransactionController extends Controller
                 }
             }
 
-            $transaction = Transaction::with(['items.product'])->where('users_id', Auth::user()->id);
+            $transaction = Transaction::with(['items'])->where('users_id', Auth::user()->id);
 
             if ($status) {
                 $transaction->where('status', $status);

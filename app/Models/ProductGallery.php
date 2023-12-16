@@ -13,6 +13,13 @@ class ProductGallery extends Model
     use HasFactory, SoftDeletes;
 
     /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'product_galleries';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
