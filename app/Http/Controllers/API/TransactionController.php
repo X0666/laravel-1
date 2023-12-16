@@ -15,37 +15,49 @@ class TransactionController extends Controller
 {
     public function all(Request $request)
     {
-        $id = $request->input('id');
-        $limit = $request->input('limit', 20);
-        $status = $request->input('status');
+        try {
+            $id = $request->input('id');
+            $limit = $request->input('limit', 20);
+            $status = $request->input('status');
+            $page = $request->input('page', 1);
 
-        if ($id) {
-            $transaction = Transaction::with(['item.product'])->find($id);
+            if ($id) {
+                $transaction = Transaction::with(['items.product'])
+                ->where('users_id', Auth::user()->id)->find($id);
 
-            if ($transaction) {
-                return ResponseFormatter::success(
-                    $transaction,
-                    'Data transaksi berhasil'
-                );
-            } else {
-                return ResponseFormatter::error(
-                    null,
-                    'Data transaksi kosong',
-                    404
-                );
+                if ($transaction) {
+                    return ResponseFormatter::success(
+                        $transaction,
+                        'Data transaksi berhasil'
+                    );
+                } else {
+                    return ResponseFormatter::error(
+                        null,
+                        'Data transaksi kosong',
+                        404
+                    );
+                }
             }
+
+            $transaction = Transaction::with(['items.product'])->where('users_id', Auth::user()->id);
+
+            if ($status) {
+                $transaction->where('status', $status);
+            }
+
+            $transactions = $transaction->paginate($limit, ['*'], 'page', $page);
+
+            return ResponseFormatter::success(
+                $transactions,
+                'Data list berhasil di ambil'
+            );
+        } catch (\Exception $e) {
+            return ResponseFormatter::error(
+                $e->getMessage(),
+                'Terjadi kesalahan saat mengambil data transaksi',
+                500
+            );
         }
-
-        $transaction = Transaction::with(['items.product'])->where('user', Auth::user()->id);
-
-        if ($status) {
-            $transaction->where('staus', $status);
-        }
-
-        return ResponseFormatter::success(
-            $transaction->paginate($limit),
-            'Data list berhasil di ambil'
-        );
     }
 
     public function checkout(Request $request)
