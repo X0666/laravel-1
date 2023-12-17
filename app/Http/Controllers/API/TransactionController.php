@@ -22,8 +22,7 @@ class TransactionController extends Controller
             $page = $request->input('page', 1);
 
             if ($id) {
-                $transaction = Transaction::with(['items'])
-                ->where('users_id', Auth::user()->id)->find($id);
+                $transaction = Transaction::with(['items'])->find($id);
 
                 if ($transaction) {
                     return ResponseFormatter::success(
@@ -156,6 +155,52 @@ class TransactionController extends Controller
             return ResponseFormatter::error(
                 $e->getMessage(),
                 'Terjadi kesalahan saat mengambil data metode payment',
+                500
+            );
+        }
+    }
+
+    public function allForAdmin(Request $request)
+    {
+        try {
+            $id = $request->input('id');
+            $limit = $request->input('limit', 20);
+            $status = $request->input('status');
+            $page = $request->input('page', 1);
+
+            if ($id) {
+                $transaction = Transaction::with(['items.product'])->find($id);
+
+                if ($transaction) {
+                    return ResponseFormatter::success(
+                        $transaction,
+                        'Data transaksi berhasil'
+                    );
+                } else {
+                    return ResponseFormatter::error(
+                        null,
+                        'Data transaksi kosong',
+                        404
+                    );
+                }
+            }
+
+            $transaction = Transaction::with(['items.product']);
+
+            if ($status) {
+                $transaction->where('status', $status);
+            }
+
+            $transactions = $transaction->paginate($limit, ['*'], 'page', $page);
+
+            return ResponseFormatter::success(
+                $transactions,
+                'Data list berhasil di ambil'
+            );
+        } catch (\Exception $e) {
+            return ResponseFormatter::error(
+                $e->getMessage(),
+                'Terjadi kesalahan saat mengambil data transaksi',
                 500
             );
         }

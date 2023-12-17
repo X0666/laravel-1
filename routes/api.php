@@ -43,4 +43,5 @@ Route::middleware(['auth:sanctum', 'role:ADMIN'])->group(function () {
     Route::post('admin/products', [ProductController::class, 'create']);
     Route::post('admin/products/{id}', [ProductController::class, 'update']);
     Route::delete('admin/products/{id}', [ProductController::class, 'delete']);
+    Route::get('admin/transaction', [TransactionController::class, 'allForAdmin']);
 });

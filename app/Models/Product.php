@@ -33,6 +33,6 @@ class Product extends Model
 
     public function TransactionItem()
     {
-        return $this->hasMany(TransactionItem::class, 'products_id', 'id');
+        return $this->hasOne(TransactionItem::class, 'products_id');
     }
 }
