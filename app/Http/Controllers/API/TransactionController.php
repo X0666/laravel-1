@@ -191,7 +191,7 @@ class TransactionController extends Controller
                 $transaction->where('status', $status);
             }
 
-            $transactions = $transaction->paginate($limit, ['*'], 'page', $page);
+            $transactions = $transaction->orderBy('updated_at', 'desc')->paginate($limit, ['*'], 'page', $page);
 
             return ResponseFormatter::success(
                 $transactions,
